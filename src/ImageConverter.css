@@ -220,6 +220,41 @@ body,
 .byline a:hover {
   color: var(--light-gold);
 }
+/* Progress Bar Container */
+.progress-bar {
+  position: relative;
+  width: 150px;
+  height: 10px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+  overflow: hidden;
+  margin: 5px 10px;
+  border: 1px solid rgba(182, 140, 2, 0.3);
+}
+
+/* Actual Progress Fill */
+.progress {
+  height: 100%;
+  background: linear-gradient(90deg, #b68c02, #ffcc00);
+  width: 0%;
+  border-radius: 10px;
+  transition: width 0.3s ease-in-out;
+  box-shadow: 0 0 10px #b68c02;
+}
+
+/* Text showing the percentage */
+.progress-text {
+  position: absolute;
+  top: -22px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 0.8rem;
+  color: #fff;
+  text-shadow: 0 0 5px #b68c02;
+  font-weight: 600;
+}
+
+
 
 /* ===========================
    🔽 FORMAT DROPDOWNS
@@ -530,6 +565,7 @@ select option {
   background: linear-gradient(135deg, var(--primary-gold), var(--text-primary));
   box-shadow: 0 0 15px rgba(215, 179, 71, 0.4);
   transform: translateY(-2px);
+  color : rgb(10, 10, 10);
 }
 
 .clear-btn {

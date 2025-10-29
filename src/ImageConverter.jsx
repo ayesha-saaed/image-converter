@@ -81,6 +81,17 @@ export default function ImageConverter() {
     updated[index].progress = 0;
     setFiles(updated);
 
+    // Fake progress for smooth UI
+    const interval = setInterval(() => {
+      setFiles((prev) => {
+        const newFiles = [...prev];
+        if (newFiles[index].progress < 90) {
+          newFiles[index].progress += 5;
+        }
+        return newFiles;
+      });
+    }, 150);
+
     img.onload = () => {
       const canvas = document.createElement("canvas");
       canvas.width = img.width;
@@ -95,8 +106,10 @@ export default function ImageConverter() {
           ? "image/png"
           : "image/webp";
 
+      // ✅ Compress with quality 0.8 (smaller size, full resolution)
       canvas.toBlob(
         (blob) => {
+          clearInterval(interval);
           if (!blob) return;
           const convertedUrl = URL.createObjectURL(blob);
           const base = item.name.split(".").slice(0, -1).join(".");
@@ -111,11 +124,12 @@ export default function ImageConverter() {
           setTimeout(() => URL.revokeObjectURL(url), 2000);
         },
         mime,
-        0.9
+        0.8 // ✅ Compression level
       );
     };
 
     img.onerror = () => {
+      clearInterval(interval);
       updated[index].isConverting = false;
       setFiles([...updated]);
       URL.revokeObjectURL(url);
@@ -125,7 +139,7 @@ export default function ImageConverter() {
   };
 
   const handleConvertAll = () => {
-    if (files.length > 0) convertFile(0);
+    files.forEach((_, i) => convertFile(i));
   };
 
   const handleClear = () => {
@@ -216,6 +230,14 @@ export default function ImageConverter() {
             <div key={index} className="file-item">
               <img src={item.preview} alt="preview" className="preview-thumb-small" />
               <span className="file-name">{item.name}</span>
+
+              {item.isConverting && (
+                <div className="progress-bar">
+                  <div className="progress" style={{ width: `${item.progress}%` }}></div>
+                  <span className="progress-text">{item.progress}%</span>
+                </div>
+              )}
+
               {!item.downloadUrl ? (
                 <button
                   className="convert-btn"
