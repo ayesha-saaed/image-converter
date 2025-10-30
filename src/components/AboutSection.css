@@ -1,0 +1,149 @@
+.about-section {
+  background-color: #000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 60px 20px;
+  color: #fff;
+}
+
+.about-box {
+  max-width: 1000px;
+  width: 100%;
+  padding: 40px;
+  border-radius: 15px;
+  background: linear-gradient(135deg, #0f0f0f, #1a1a1a, #111111);
+  box-shadow: 0 0 20px rgba(0, 255, 255, 0.1);
+  line-height: 1.7;
+  transition: all 0.3s ease-in-out;
+}
+
+.about-box h1,
+.about-box h2 {
+  color: #00bfff;
+  margin-bottom: 15px;
+}
+
+.about-box p {
+  color: #ddd;
+  margin-bottom: 15px;
+}
+
+.about-box ul,
+.about-box ol {
+  margin-left: 20px;
+  color: #ccc;
+}
+
+.about-box li {
+  margin-bottom: 8px;
+}
+
+.about-box table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 20px 0;
+}
+
+.about-box th,
+.about-box td {
+  border: 1px solid #333;
+  padding: 10px;
+  text-align: center;
+  color: #eee;
+}
+
+.about-box th {
+  background-color: #111;
+}
+
+.faq-list strong {
+  color: #00bfff;
+}
+
+.cta {
+  margin-top: 20px;
+  font-weight: 600;
+  color: #00ffd5;
+  text-align: center;
+  font-size: 18px;
+}
+
+/* ---------------------------- */
+/* 📱 Mobile Responsive Section */
+/* ---------------------------- */
+@media (max-width: 1024px) {
+  .about-box {
+    max-width: 90%;
+    padding: 30px;
+  }
+}
+
+@media (max-width: 768px) {
+  .about-section {
+    padding: 40px 15px;
+  }
+
+  .about-box {
+    padding: 25px;
+    border-radius: 10px;
+  }
+
+  .about-box h1 {
+    font-size: 22px;
+    text-align: center;
+    line-height: 1.4;
+  }
+
+  .about-box h2 {
+    font-size: 18px;
+    margin-top: 20px;
+  }
+
+  .about-box p,
+  .about-box li {
+    font-size: 14px;
+    line-height: 1.6;
+  }
+
+  .about-box table {
+    font-size: 13px;
+  }
+
+  .cta {
+    font-size: 16px;
+  }
+}
+
+@media (max-width: 480px) {
+  .about-section {
+    padding: 30px 10px;
+  }
+
+  .about-box {
+    padding: 20px;
+  }
+
+  .about-box h1 {
+    font-size: 20px;
+  }
+
+  .about-box h2 {
+    font-size: 16px;
+  }
+
+  .about-box p,
+  .about-box li {
+    font-size: 13px;
+  }
+
+  .about-box table th,
+  .about-box table td {
+    font-size: 12px;
+    padding: 6px;
+  }
+
+  .cta {
+    font-size: 15px;
+  }
+}
