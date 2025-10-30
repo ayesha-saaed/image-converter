@@ -7,25 +7,25 @@ export default function ImageConverter() {
   const [fromFormat, setFromFormat] = useState("png");
   const fileInputRef = useRef(null);
 
-  // ✅ Load particles.js dynamically
+  // Blue & White Particles Background
   useEffect(() => {
     const loadParticles = () => {
       if (window.particlesJS) {
         window.particlesJS("particles-js", {
           particles: {
-            number: { value: 100, density: { enable: true, value_area: 900 } },
-            color: { value: ["#ffffff", "#b68c02", "#000000"] },
+            number: { value: 90, density: { enable: true, value_area: 900 } },
+            color: { value: ["#0048ff", "#ffffff"] },
             shape: { type: "circle" },
-            opacity: { value: 0.6, random: true },
+            opacity: { value: 0.7, random: true },
             size: { value: 3, random: true },
             line_linked: {
               enable: true,
               distance: 130,
-              color: "#b68c02",
-              opacity: 0.3,
+              color: "#0048ff",
+              opacity: 0.35,
               width: 1,
             },
-            move: { enable: true, speed: 1.8 },
+            move: { enable: true, speed: 1.6 },
           },
           interactivity: {
             detect_on: "canvas",
@@ -33,7 +33,7 @@ export default function ImageConverter() {
               onhover: { enable: true, mode: "repulse" },
               onclick: { enable: true, mode: "push" },
             },
-            modes: { repulse: { distance: 100 }, push: { particles_nb: 4 } },
+            modes: { repulse: { distance: 120 }, push: { particles_nb: 4 } },
           },
           retina_detect: true,
         });
@@ -42,7 +42,8 @@ export default function ImageConverter() {
 
     if (!window.particlesJS) {
       const script = document.createElement("script");
-      script.src = "https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js";
+      script.src =
+        "https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js";
       script.async = true;
       script.onload = loadParticles;
       document.body.appendChild(script);
@@ -76,21 +77,27 @@ export default function ImageConverter() {
 
     const img = new Image();
     const url = URL.createObjectURL(item.file);
-    const updated = [...files];
-    updated[index].isConverting = true;
-    updated[index].progress = 0;
-    setFiles(updated);
 
-    // Fake progress for smooth UI
-    const interval = setInterval(() => {
-      setFiles((prev) => {
-        const newFiles = [...prev];
-        if (newFiles[index].progress < 90) {
-          newFiles[index].progress += 5;
-        }
-        return newFiles;
-      });
-    }, 150);
+    setFiles((prev) => {
+      const updated = [...prev];
+      updated[index].isConverting = true;
+      updated[index].progress = 0;
+      return updated;
+    });
+
+    let progress = 0;
+    const simulateProgress = setInterval(() => {
+      if (progress < 90) {
+        progress += 10;
+        setFiles((prev) => {
+          const updated = [...prev];
+          updated[index].progress = progress;
+          return updated;
+        });
+      } else {
+        clearInterval(simulateProgress);
+      }
+    }, 100);
 
     img.onload = () => {
       const canvas = document.createElement("canvas");
@@ -106,32 +113,39 @@ export default function ImageConverter() {
           ? "image/png"
           : "image/webp";
 
-      // ✅ Compress with quality 0.8 (smaller size, full resolution)
       canvas.toBlob(
         (blob) => {
-          clearInterval(interval);
+          clearInterval(simulateProgress);
           if (!blob) return;
           const convertedUrl = URL.createObjectURL(blob);
           const base = item.name.split(".").slice(0, -1).join(".");
-          updated[index] = {
-            ...updated[index],
-            isConverting: false,
-            progress: 100,
-            downloadUrl: convertedUrl,
-            name: `${base}.${toFormat}`,
-          };
-          setFiles([...updated]);
+
+          setFiles((prev) => {
+            const updated = [...prev];
+            updated[index] = {
+              ...updated[index],
+              isConverting: false,
+              progress: 100,
+              downloadUrl: convertedUrl,
+              name: `${base}.${toFormat}`,
+            };
+            return updated;
+          });
+
           setTimeout(() => URL.revokeObjectURL(url), 2000);
         },
         mime,
-        0.8 // ✅ Compression level
+        0.8
       );
     };
 
     img.onerror = () => {
-      clearInterval(interval);
-      updated[index].isConverting = false;
-      setFiles([...updated]);
+      clearInterval(simulateProgress);
+      setFiles((prev) => {
+        const updated = [...prev];
+        updated[index].isConverting = false;
+        return updated;
+      });
       URL.revokeObjectURL(url);
     };
 
@@ -139,136 +153,190 @@ export default function ImageConverter() {
   };
 
   const handleConvertAll = () => {
-    files.forEach((_, i) => convertFile(i));
+    if (files.length > 0) files.forEach((_, i) => convertFile(i));
   };
 
   const handleClear = () => {
-    files.forEach((f) => URL.revokeObjectURL(f.preview));
+    files.forEach((f) => {
+      URL.revokeObjectURL(f.preview);
+      if (f.downloadUrl) URL.revokeObjectURL(f.downloadUrl);
+    });
     setFiles([]);
     if (fileInputRef.current) fileInputRef.current.value = "";
   };
 
   return (
-    <div className="converter-container">
+    <div className="converter-wrapper">
       <div id="particles-js"></div>
 
       {/* Header */}
       <header className="header">
         <div className="logo-area">
           <img
-            src="https://brainhub.uk/wp-content/uploads/2025/04/cropped-Brain-Hub-favicon-1-192x192.png"
+            src="logo.jpg"
             alt="Brainhub logo"
           />
           <span>
-            <a href="https://www.brainhub.uk" target="_blank" rel="noopener noreferrer">
+            <a
+              href="https://www.brainhub.uk"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
               Brainhub
             </a>
           </span>
         </div>
         <nav>
-          <a href="https://brainhub.uk/about-us/" target="_blank" rel="noopener noreferrer">
-            About Us
+          <a
+            href="https://brainhub.uk/about-us/"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <span>About Us</span>
           </a>
-          <a href="https://brainhub.uk/contact-us/" target="_blank" rel="noopener noreferrer">
-            Contact Us
+          <a
+            href="https://brainhub.uk/contact-us/"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <span>Contact Us</span>
           </a>
         </nav>
       </header>
 
-      {/* Main Card */}
-      <div className="converter-card">
-        <h1 className="title">Image Converter</h1>
-        <p className="byline-under-title">
-          By{" "}
-          <a href="https://www.brainhub.uk" target="_blank" rel="noopener noreferrer">
-            Brainhub
-          </a>
-        </p>
-
-        {/* Dropdowns */}
-        <div className="formats-row">
-          <select value={fromFormat} onChange={(e) => setFromFormat(e.target.value)}>
-            <option value="png">PNG</option>
-            <option value="jpeg">JPEG</option>
-            <option value="webp">WEBP</option>
-          </select>
-          <span className="arrow">→</span>
-          <select value={toFormat} onChange={(e) => setToFormat(e.target.value)}>
-            <option value="webp">WEBP</option>
-            <option value="png">PNG</option>
-            <option value="jpeg">JPEG</option>
-          </select>
-        </div>
-
-        {/* Drop Zone */}
-        <div
-          className="drop-zone"
-          onClick={() => fileInputRef.current.click()}
-          onDragOver={(e) => e.preventDefault()}
-          onDrop={(e) => {
-            e.preventDefault();
-            handleFileSelect(e.dataTransfer.files);
-          }}
-        >
-          <p>
-            <i className="fa-solid fa-upload"></i> Choose Images
+      {/* Main Content */}
+      <main className="converter-main">
+        <div className="converter-card">
+          <h1 className="title">Image Converter</h1>
+          <p className="byline-under-title">
+            Powered by{" "}
+            <a
+              href="https://www.brainhub.uk"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Brainhub
+            </a>
           </p>
-        </div>
 
-        <input
-          type="file"
-          ref={fileInputRef}
-          accept="image/*"
-          multiple
-          style={{ display: "none" }}
-          onChange={(e) => handleFileSelect(e.target.files)}
-        />
-
-        {/* File List */}
-        <div className="file-list">
-          {files.map((item, index) => (
-            <div key={index} className="file-item">
-              <img src={item.preview} alt="preview" className="preview-thumb-small" />
-              <span className="file-name">{item.name}</span>
-
-              {item.isConverting && (
-                <div className="progress-bar">
-                  <div className="progress" style={{ width: `${item.progress}%` }}></div>
-                  <span className="progress-text">{item.progress}%</span>
-                </div>
-              )}
-
-              {!item.downloadUrl ? (
-                <button
-                  className="convert-btn"
-                  onClick={() => convertFile(index)}
-                  disabled={item.isConverting}
-                >
-                  Convert
-                </button>
-              ) : (
-                <a href={item.downloadUrl} download={item.name} className="download-btn">
-                  Download
-                </a>
-              )}
-            </div>
-          ))}
-        </div>
-
-        {files.length > 0 && (
-          <div className="bottom-buttons">
-            <button className="convert-btn" onClick={handleConvertAll}>
-              Convert All
-            </button>
-            <button className="clear-btn" onClick={handleClear}>
-              Clear All
-            </button>
+          {/* Format Selection */}
+          <div className="formats-row">
+            <select
+              value={fromFormat}
+              onChange={(e) => setFromFormat(e.target.value)}
+              className="format-select"
+            >
+              <option value="png">PNG</option>
+              <option value="jpeg">JPEG</option>
+              <option value="webp">WEBP</option>
+            </select>
+            <span className="arrow">→</span>
+            <select
+              value={toFormat}
+              onChange={(e) => setToFormat(e.target.value)}
+              className="format-select"
+            >
+              <option value="webp">WEBP</option>
+              <option value="png">PNG</option>
+              <option value="jpeg">JPEG</option>
+            </select>
           </div>
-        )}
-      </div>
+
+          {/* Upload Area */}
+          <div
+            className="drop-zone"
+            onClick={() => fileInputRef.current.click()}
+            onDragOver={(e) => e.preventDefault()}
+            onDrop={(e) => {
+              e.preventDefault();
+              handleFileSelect(e.dataTransfer.files);
+            }}
+          >
+            <p>
+              <i className="fa-solid fa-upload"></i> Choose Images or Drag & Drop
+            </p>
+          </div>
+
+          <input
+            type="file"
+            ref={fileInputRef}
+            accept="image/*"
+            multiple
+            style={{ display: "none" }}
+            onChange={(e) => handleFileSelect(e.target.files)}
+          />
+
+          {/* File List */}
+          {files.length > 0 && (
+            <div className="file-list">
+              {files.map((item, index) => (
+                <div key={index} className="file-item">
+                  <img
+                    src={item.preview}
+                    alt="preview"
+                    className="preview-thumb-small"
+                  />
+                  <span className="file-name">{item.name}</span>
+
+                  {item.isConverting && (
+                    <div className="progress-container">
+                      <div
+                        className="progress-bar"
+                        style={{ width: `${item.progress}%` }}
+                      ></div>
+                      <span className="progress-text">
+                        {item.progress}%
+                      </span>
+                    </div>
+                  )}
+
+                  {!item.downloadUrl ? (
+                    <button
+                      className="convert-btn btn-animated"
+                      onClick={() => convertFile(index)}
+                      disabled={item.isConverting}
+                    >
+                      <span>
+                        {item.isConverting ? `${item.progress}%` : "Convert"}
+                      </span>
+                    </button>
+                  ) : (
+                    <a
+                      href={item.downloadUrl}
+                      download={item.name}
+                      className="download-btn btn-animated"
+                    >
+                      <span>Download</span>
+                    </a>
+                  )}
+                </div>
+              ))}
+            </div>
+          )}
+
+          {files.length > 0 && (
+            <div className="bottom-buttons">
+              <button
+                className="convert-btn btn-animated"
+                onClick={handleConvertAll}
+              >
+                <span>Convert All</span>
+              </button>
+              <button
+                className="clear-btn btn-animated"
+                onClick={handleClear}
+              >
+                <span>Clear All</span>
+              </button>
+            </div>
+          )}
+        </div>
+      </main>
 
       {/* Footer */}
-      <footer className="footer">© 2025 All rights reserved by Brainhub.uk</footer>
+      <footer className="footer">
+        © 2025 All rights reserved by Brainhub.uk
+      </footer>
     </div>
   );
 }
