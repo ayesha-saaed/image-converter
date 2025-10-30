@@ -1,17 +1,17 @@
-import ImageConverter from './ImageConverter';
- import SplashCursor from './SplashCursor';
-
-
+import React from "react";
+import ImageConverter from "./ImageConverter";
+import SplashCursor from "./SplashCursor";
+import "./index.css";
 
 function App() {
   return (
     <>
-    <ImageConverter />
-    <SplashCursor />
+      <SplashCursor />
+      <div className="app-content">
+        <ImageConverter />
+      </div>
     </>
   );
-  
-  
 }
 
 export default App;

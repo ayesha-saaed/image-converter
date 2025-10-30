@@ -1,56 +1,12 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useRef, useState } from "react";
 import "./ImageConverter.css";
+import Header from "./Header";
 
 export default function ImageConverter() {
   const [files, setFiles] = useState([]);
   const [toFormat, setToFormat] = useState("webp");
   const [fromFormat, setFromFormat] = useState("png");
   const fileInputRef = useRef(null);
-
-  // Blue & White Particles Background
-  useEffect(() => {
-    const loadParticles = () => {
-      if (window.particlesJS) {
-        window.particlesJS("particles-js", {
-          particles: {
-            number: { value: 90, density: { enable: true, value_area: 900 } },
-            color: { value: ["#0048ff", "#ffffff"] },
-            shape: { type: "circle" },
-            opacity: { value: 0.7, random: true },
-            size: { value: 3, random: true },
-            line_linked: {
-              enable: true,
-              distance: 130,
-              color: "#0048ff",
-              opacity: 0.35,
-              width: 1,
-            },
-            move: { enable: true, speed: 1.6 },
-          },
-          interactivity: {
-            detect_on: "canvas",
-            events: {
-              onhover: { enable: true, mode: "repulse" },
-              onclick: { enable: true, mode: "push" },
-            },
-            modes: { repulse: { distance: 120 }, push: { particles_nb: 4 } },
-          },
-          retina_detect: true,
-        });
-      }
-    };
-
-    if (!window.particlesJS) {
-      const script = document.createElement("script");
-      script.src =
-        "https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js";
-      script.async = true;
-      script.onload = loadParticles;
-      document.body.appendChild(script);
-    } else {
-      loadParticles();
-    }
-  }, []);
 
   const detectFormat = (fileName) => {
     const ext = fileName.split(".").pop().toLowerCase();
@@ -110,8 +66,8 @@ export default function ImageConverter() {
         toFormat === "jpeg" || toFormat === "jpg"
           ? "image/jpeg"
           : toFormat === "png"
-          ? "image/png"
-          : "image/webp";
+            ? "image/png"
+            : "image/webp";
 
       canvas.toBlob(
         (blob) => {
@@ -167,43 +123,7 @@ export default function ImageConverter() {
 
   return (
     <div className="converter-wrapper">
-      <div id="particles-js"></div>
-
-      {/* Header */}
-      <header className="header">
-        <div className="logo-area">
-          <img
-            src="logo.jpg"
-            alt="Brainhub logo"
-          />
-          <span>
-            <a
-              href="https://www.brainhub.uk"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Brainhub
-            </a>
-          </span>
-        </div>
-        <nav>
-          <a
-            href="https://brainhub.uk/about-us/"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <span>About Us</span>
-          </a>
-          <a
-            href="https://brainhub.uk/contact-us/"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <span>Contact Us</span>
-          </a>
-        </nav>
-      </header>
-
+      <Header />
       {/* Main Content */}
       <main className="converter-main">
         <div className="converter-card">
@@ -218,7 +138,6 @@ export default function ImageConverter() {
               Brainhub
             </a>
           </p>
-
           {/* Format Selection */}
           <div className="formats-row">
             <select
@@ -241,7 +160,6 @@ export default function ImageConverter() {
               <option value="jpeg">JPEG</option>
             </select>
           </div>
-
           {/* Upload Area */}
           <div
             className="drop-zone"
@@ -256,7 +174,6 @@ export default function ImageConverter() {
               <i className="fa-solid fa-upload"></i> Choose Images or Drag & Drop
             </p>
           </div>
-
           <input
             type="file"
             ref={fileInputRef}
@@ -265,7 +182,6 @@ export default function ImageConverter() {
             style={{ display: "none" }}
             onChange={(e) => handleFileSelect(e.target.files)}
           />
-
           {/* File List */}
           {files.length > 0 && (
             <div className="file-list">
@@ -277,7 +193,6 @@ export default function ImageConverter() {
                     className="preview-thumb-small"
                   />
                   <span className="file-name">{item.name}</span>
-
                   {item.isConverting && (
                     <div className="progress-container">
                       <div
@@ -289,7 +204,6 @@ export default function ImageConverter() {
                       </span>
                     </div>
                   )}
-
                   {!item.downloadUrl ? (
                     <button
                       className="convert-btn btn-animated"
@@ -313,26 +227,28 @@ export default function ImageConverter() {
               ))}
             </div>
           )}
-
           {files.length > 0 && (
             <div className="bottom-buttons">
-              <button
-                className="convert-btn btn-animated"
-                onClick={handleConvertAll}
+              <a
+                href="#convert-all"
+                onClick={e => { e.preventDefault(); handleConvertAll(); }}
+                className="glow-on-hover nav-links-a"
+                style={{ textAlign: 'center', minWidth: '110px', userSelect: 'none' , minHeight: '40px', border: '1px solid #096EFE'}}
               >
-                <span>Convert All</span>
-              </button>
-              <button
-                className="clear-btn btn-animated"
-                onClick={handleClear}
+                Convert All
+              </a>
+              <a
+                href="#clear-all"
+                onClick={e => { e.preventDefault(); handleClear(); }}
+                className="glow-on-hover nav-links-a"
+                style={{ textAlign: 'center', minWidth: '110px', userSelect: 'none', minHeight: '40px', border: '1px solid #096EFE' }}
               >
-                <span>Clear All</span>
-              </button>
+                Clear All
+              </a>
             </div>
           )}
         </div>
       </main>
-
       {/* Footer */}
       <footer className="footer">
         © 2025 All rights reserved by Brainhub.uk
